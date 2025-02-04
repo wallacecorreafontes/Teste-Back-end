@@ -1,66 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# API de Gerenciamento de Cidades, Médicos e Pacientes
 
-## About Laravel
+Este projeto foi desenvolvido como parte de um teste técnico para a vaga de Desenvolvedor Back-end Pleno. A API gerencia informações sobre cidades, médicos e pacientes, permitindo listar, cadastrar e atualizar dados, com diferentes níveis de acesso baseados em autenticação.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tecnologias Usadas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Laravel 11** 
+- **Laravel Sail** para containers Docker
+- **JWT** para autenticação de usuários
+- **MySQL** como banco de dados
+- **Postman** para testes de integração dos endpoints
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Funcionalidades Implementadas
 
-## Learning Laravel
+A API permite realizar operações com as seguintes entidades:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 1. **Cidade**
+- **Listar Cidades:** Endpoint público para listar as cidades cadastradas. Aceita busca por nome e ordenação alfabética.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 2. **Médico**
+- **Listar Médicos:** Endpoint público para listar médicos cadastrados, com suporte a busca por nome e exclusão dos prefixos "dr" e "dra".
+- **Listar Médicos por Cidade:** Endpoint para listar médicos de uma cidade específica, com suporte a busca por nome.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. **Paciente**
+- **Listar Pacientes de um Médico:** Endpoint autenticado para listar pacientes agendados com um médico, com a possibilidade de filtrar apenas consultas agendadas e busca por nome.
+- **Cadastrar Paciente:** Endpoint autenticado para adicionar um novo paciente à base de dados.
+- **Atualizar Paciente:** Endpoint autenticado para atualizar os dados de um paciente.
 
-## Laravel Sponsors
+### 4. **Consulta**
+- **Agendar Consulta:** Endpoint autenticado para agendar consultas entre médicos e pacientes, passando o ID do médico, ID do paciente e a data.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Requisitos de Execução
 
-### Premium Partners
+### 1. Configuração do Ambiente
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Para rodar o projeto, o ambiente foi configurado utilizando **Laravel Sail**, que usa containers Docker para a aplicação e o banco de dados. Siga os passos abaixo para configurar e rodar a aplicação localmente:
 
-## Contributing
+1. **Clone o repositório**:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **Instale as dependências do Laravel**:
+   ```bash
+   composer install
+   ```
 
-## Code of Conduct
+3. **Inicie o Laravel Sail**:
+   ```bash
+   ./vendor/bin/sail up -d
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   Isso irá subir o container da aplicação e o banco de dados MySQL.
 
-## Security Vulnerabilities
+4. **Crie o banco de dados**:
+   ```bash
+   ./vendor/bin/sail artisan migrate
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Popule o banco de dados com dados fictícios**:
+   ```bash
+   ./vendor/bin/sail artisan db:seed
+   ```
 
-## License
+### 2. Configuração de Autenticação
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+A autenticação da API utiliza **JWT** (JSON Web Tokens). Para obter um token de autenticação, envie uma requisição POST para o endpoint `/login` com as credenciais do usuário. O token retornado deve ser utilizado no header de autorização (`Authorization: Bearer <token>`) para acessar os endpoints que requerem autenticação.
+
+### 3. Testando os Endpoints com o Postman
+
+Foi usado a coleção no **Postman** [https://web.postman.co/workspace/Teste-Facil-Consulta~8e0c2ff7-b96f-46ad-9b34-d92e10ab9438/collection/23818071-1ee3f4ef-d351-45e2-a38f-1b4940c3ad58?action=share&creator=23818071] com todos os endpoints disponíveis para teste. A coleção inclui exemplos de requisições e respostas para facilitar o teste da API.
+
+## Endpoints
+### **Cidade**
+
+- **GET /cidades**: Listar todas as cidades.
+- **GET /cidades?nome={nome}**: Buscar cidades pelo nome.
+
+### **Médico**
+
+- **GET /medicos**: Listar todos os médicos.
+- **GET /medicos?nome={nome}**: Buscar médicos pelo nome.
+- **GET /cidades/{id_cidade}/medicos**: Listar médicos de uma cidade específica.
+- **GET /cidades/{id_cidade}/medicos?nome={nome}**: Buscar médicos de uma cidade específica pelo nome.
+
+### **Paciente**
+
+- **GET /medicos/{id_medico}/pacientes**: Listar pacientes agendados para um médico.
+- **POST /pacientes**: Cadastrar um novo paciente.
+- **PUT /pacientes/{id_paciente}**: Atualizar os dados de um paciente.
+
+### **Consulta**
+
+- **POST /medicos/consulta**: Agendar uma consulta entre médico e paciente.
+
+---
+
+## Estrutura do Banco de Dados
+
+As tabelas principais incluem:
+
+- **Cidades**: Armazena informações sobre as cidades.
+- **Médicos**: Armazena informações sobre médicos.
+- **Pacientes**: Armazena informações sobre pacientes.
+- **Consultas**: Armazena os agendamentos de consultas entre médicos e pacientes.
