@@ -44,7 +44,7 @@ class PacientesController extends Controller
             $paciente->update($validated);
 
             DB::commit();
-            return response()->json(['message' => 'Paciente atualizado com sucesso', 'response' => $paciente], 201);
+            return response()->json(['message' => 'Paciente atualizado com sucesso', 'response' => $paciente], 200);
         } catch (\Exception $e) {
 
             DB::rollBack();
