@@ -16,4 +16,9 @@ class Paciente extends Model
         'cpf',
         'celular',
     ];
+
+    public function consultas()
+    {
+        return $this->hasMany(Consulta::class);
+    }
 }
