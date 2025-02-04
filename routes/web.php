@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CidadesController;
 use App\Http\Controllers\MedicosController;
+use App\Http\Controllers\PacientesController;
 use Illuminate\Support\Facades\Route;
 
 # Rotas API`s
@@ -32,4 +33,8 @@ Route::prefix('api')->group(function () {
     
     ## Buscar pacientes por Médicos
     Route::get('/medicos/{medico_id}/pacientes', [MedicosController::class, 'getPacientesByMedico'])->middleware('auth:api');
+
+    ## Pacientes
+    Route::post('/pacientes', [PacientesController::class, 'store'])->middleware('auth:api');
+    Route::put('/pacientes/{paciente_id}', [PacientesController::class, 'update'])->middleware('auth:api');
 });
