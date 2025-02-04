@@ -46,4 +46,28 @@ class MedicosController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function getPacientesByMedico($medico_id)
+    {
+        $nome = request()->get('nome');
+        $apenasAgendadas = request()->get('apenas-agendadas', false);
+
+        $medico = Medico::with(['consultas.paciente'])
+            ->findOrFail($medico_id);
+
+        $consultas = $medico->consultas()->when($nome, function ($query) use ($nome) {
+            $query->whereHas('paciente', function ($subQuery) use ($nome) {
+                $subQuery->where('nome', 'LIKE', '%' . $nome . '%');
+            });
+        });
+
+        if ($apenasAgendadas) {
+            $consultas->whereNull('data')->orWhere('data', '>', now());
+        }
+
+        $consultas = $consultas->orderBy('data', 'ASC')->get();
+        $pacientes = $consultas->pluck('paciente');
+
+        return response()->json($pacientes);
+    }
 }

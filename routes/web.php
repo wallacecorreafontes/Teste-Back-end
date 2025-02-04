@@ -15,6 +15,8 @@ Route::prefix('api')->group(function () {
 
     ## Cidades
     Route::get('/cidades', [CidadesController::class, 'index']);
+
+    ## Buscar Médicos por Cidades
     Route::get('/cidades/{cidade_id}/medicos', [CidadesController::class, 'getMedicosByCidades']);
 
     ## Medicos
@@ -27,4 +29,7 @@ Route::prefix('api')->group(function () {
 
     ## Cadastrar Medico
     Route::post('/medicos', [MedicosController::class, 'store'])->middleware('auth:api');
+    
+    ## Buscar pacientes por Médicos
+    Route::get('/medicos/{medico_id}/pacientes', [MedicosController::class, 'getPacientesByMedico'])->middleware('auth:api');
 });
