@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Consulta;
 use App\Models\Medico;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -69,5 +70,27 @@ class MedicosController extends Controller
         $pacientes = $consultas->pluck('paciente');
 
         return response()->json($pacientes);
+    }
+
+    public function storeConsulta(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validated = $request->validate([
+                'medico_id' => 'required|integer|exists:medicos,id',
+                'paciente_id' => 'required|integer|exists:pacientes,id',
+                'data' => 'required|date_format:Y-m-d H:i:s',
+            ]);
+
+            $consulta = Consulta::create($validated);
+
+            DB::commit();
+            return response()->json(['message' => 'Consulta registrado com sucesso', 'response' => $consulta], 201);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }
