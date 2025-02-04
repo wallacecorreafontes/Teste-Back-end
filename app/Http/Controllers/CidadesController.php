@@ -35,6 +35,11 @@ class CidadesController extends Controller
         $query->where('id', $cidade_id);
 
         $cidade = $query->first();
-        return response()->json($cidade);
+
+        if (!$cidade) {
+            return response()->json(['message' => 'Cidade não encontrada'], 404);
+        }
+        
+        return response()->json($cidade->medicos);
     }
 }
