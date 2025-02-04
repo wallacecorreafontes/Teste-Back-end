@@ -53,23 +53,33 @@ class MedicosController extends Controller
         $nome = request()->get('nome');
         $apenasAgendadas = request()->get('apenas-agendadas', false);
 
-        $medico = Medico::with(['consultas.paciente'])
-            ->findOrFail($medico_id);
+        $consultas = Medico::with(['consultas.paciente'])
+            ->findOrFail($medico_id)
+            ->consultas()
+            ->when($nome, function ($query) use ($nome) {
+                $query->whereHas('paciente', function ($subQuery) use ($nome) {
+                    $subQuery->where('nome', 'LIKE', '%' . $nome . '%');
+                });
+            })
+            ->when($apenasAgendadas, function ($query) {
+                $query->orWhere('data', '>', now());
+            })
+            ->orderBy('data', 'ASC')
+            ->get();
 
-        $consultas = $medico->consultas()->when($nome, function ($query) use ($nome) {
-            $query->whereHas('paciente', function ($subQuery) use ($nome) {
-                $subQuery->where('nome', 'LIKE', '%' . $nome . '%');
+        $pacientes = $consultas->groupBy('paciente_id')->map(function ($consultasPorPaciente) {
+            $paciente = $consultasPorPaciente->first()->paciente;
+            $consultas = $consultasPorPaciente->map(function ($consulta) use ($paciente) {
+                return $consulta->only(['id', 'medico_id', 'data', 'created_at', 'updated_at', 'deleted_at']);
             });
+
+            return [
+                ...$paciente->toArray(),
+                'consultas' => $consultas
+            ];
         });
 
-        if ($apenasAgendadas) {
-            $consultas->whereNull('data')->orWhere('data', '>', now());
-        }
-
-        $consultas = $consultas->orderBy('data', 'ASC')->get();
-        $pacientes = $consultas->pluck('paciente');
-
-        return response()->json($pacientes);
+        return response()->json($pacientes->values()->all());
     }
 
     public function storeConsulta(Request $request)

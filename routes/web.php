@@ -27,13 +27,13 @@ Route::prefix('api')->group(function () {
 
     ## User
     Route::get('/user', [AuthController::class, 'me'])->middleware('auth:api');
-
+    
     ## Cadastrar Medico
     Route::post('/medicos', [MedicosController::class, 'store'])->middleware('auth:api');
-    
+
     ## Nova consulta
     Route::post('/medicos/consulta', [MedicosController::class, 'storeConsulta'])->middleware('auth:api');
-    
+
     ## Buscar pacientes por Médicos
     Route::get('/medicos/{medico_id}/pacientes', [MedicosController::class, 'getPacientesByMedico'])->middleware('auth:api');
 
