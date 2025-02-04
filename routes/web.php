@@ -15,6 +15,7 @@ Route::prefix('api')->group(function () {
 
     ## Cidades
     Route::get('/cidades', [CidadesController::class, 'index']);
+    Route::get('/cidades/{cidade_id}/medicos', [CidadesController::class, 'getMedicosByCidades']);
 
     ## Medicos
     Route::get('/medicos', [MedicosController::class, 'index']);
